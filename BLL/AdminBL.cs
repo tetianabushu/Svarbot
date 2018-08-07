@@ -22,6 +22,7 @@ namespace BLL
         {
             return adminDAL.Superbruker_i_DB(InSuperDTO);
         }		
+		
         //Tetiana 
         //Metode lagrer klikk i database
         public void SaveClickCount(int categoryId, int isMainCat, string username)
