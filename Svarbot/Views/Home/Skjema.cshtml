@@ -1,0 +1,124 @@
+﻿@model Model.SkjemaDTO
+
+@{ 
+    ViewBag.Title = "Skjema";
+}
+
+<script>
+    @*var model = @Html.Raw(Json.Encode(Model));
+    $(function ()
+    {
+        if (model.CategoryId != 0)
+        {
+            var output = "";
+            output += "<tr>"+
+                "<th> <label for='Id'>Case nummer: </label> </th>
+                <th> <input class="form1" data-val="true" data-val-number="The field Case nummer:  must be a number." data-val-required="Feltet Case nummer:  er obligatorisk." id="Id" name="Id" type="text" value="25435"> </th>
+</tr>
+        }
+    });*@
+
+    //$(document).ready(function () {
+    //    if (typeof mainCategoriId === 'undefined'){
+    //        $("#categoryWarning").append(
+    //            "<div class='alert alert-primary' role'alert'>Du må velge en kategori før du går til innmelding av sak.</div>"
+    //        );
+    //    }
+    //});
+</script>
+
+<div class="container">
+
+    @if (Session["LoggedInUsername"] == null) {
+        <div class="alertWidth alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Du må logge inn for å kunne melde inn saker.
+        </div>
+    }
+
+    else if (ViewBag.Innmeldt != null) {
+        <div class="alertWidth alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @ViewBag.Innmeldt
+        </div>
+        <p>@Html.ActionLink("Til forsiden", "Index", "Home")</p>
+    }
+
+    else if (ViewBag.Melding != null) {
+        <div class="alertWidth alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @ViewBag.Melding
+        </div>
+    }
+        @using (Html.BeginForm("Skjema", "Home", FormMethod.Post)) {
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        @*<div class="@(Model.CategoryId)" style="display:none"></div>*@
+
+        <div>@Html.TextBoxFor(Skjema => Skjema.CategoryId, "", new { @class = "hidden" })</div>
+        <div class="form-group">
+            <div class="row">
+                @Html.LabelFor(Skjema => Skjema.CategoryName, "Sak kategori", new { @class = "col-sm-4 form-text" })
+                @Html.EditorFor(Skjema => Skjema.CategoryName, "", new { htmlattributes = new { @class = "col-sm-4 form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(Skjema => Skjema.CategoryName, null, new { @class = "col-sm-4 form-text" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                @Html.LabelFor(Skjema => Skjema.Id, new { @class = "col-sm-4 form-text" })
+                @Html.EditorFor(Skjema => Skjema.Id, "", new { htmlattributes = new { @class = "col-sm-4 form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(Skjema => Skjema.Id, null, new { @class = "col-sm-4 form-text" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                @Html.LabelFor(Skjema => Skjema.Username, new { @class = "col-sm-4 form-text" })
+                @Html.EditorFor(Skjema => Skjema.Username, "", new { htmlattributes = new { @class = "col-sm-4 form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(Skjema => Skjema.Username, null, new { @class = "col-sm-4 form-text" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                @Html.LabelFor(Skjema => Skjema.SBnumber, new { @class = "col-sm-4 form-text" })
+                @Html.EditorFor(Skjema => Skjema.SBnumber, "", new { htmlattributes = new { @class = "col-sm-4 form-control" } })
+                @Html.ValidationMessageFor(Skjema => Skjema.SBnumber, null, new { @class = "col-sm-4 form-text" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                @Html.LabelFor(Skjema => Skjema.Location, new { @class = "col-sm-4 form-text" })
+                @Html.EditorFor(Skjema => Skjema.Location, "", new { htmlattributes = new { @class = "col-sm-4 form-control"} })
+                @Html.ValidationMessageFor(Skjema => Skjema.Location, null, new { @class = "col-sm-4 form-text" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                @Html.LabelFor(Skjema => Skjema.Message, new { @class = "col-sm-4 form-text" })
+                @Html.TextAreaFor(Skjema => Skjema.Message, new { @class = "col-sm-4 form-control" })
+                @Html.ValidationMessageFor(Skjema => Skjema.Message, null, new { @class = "col-sm-4 form-text" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                @Html.LabelFor(Skjema => Skjema.UserNr, new { @class = "col-sm-4 form-text" })
+                @Html.DropDownListFor(Skjema => Skjema.UserNr, new SelectList(
+                    new List<object>
+                    {
+                            new { value = "", text = "Velg et alternativ"},
+                            new { value = 1, text = "1 person"},
+                            new { value = 2, text = "2-10 personer" },
+                            new { value = 3, text = "11-50 personer" },
+                            new { value = 4, text = "51 eller flere personer" },
+                    },
+                    "value",
+                    "text",
+                    0), new { @class = "col-sm-4 form-control" })
+                @Html.ValidationMessageFor(Skjema => Skjema.UserNr, null, new { @class = "col-sm-4 form-text" })
+            </div>
+        </div>
+
+        <input type="submit" class="btn btn-primary" name="Skjema" value="Send inn sak" />
+         }
+</div>

@@ -1,0 +1,48 @@
+﻿@model List<Model.CaseDetailsDTO>
+@{
+    Layout = null;
+}
+
+@*<script src="@Url.Content("/Scripts/SvarbotScripts/show-diagram-catcases.js")"></script>*@
+
+<script>
+    var url = "/Scripts/SvarbotScripts/show-diagram-catcases.js";
+    $.getScript(url);
+</script>
+<div class="admin-diagram-header margin-bottom col-md-6" width="75%">Alle saker med detaljer</div>
+<div class="row">
+    <div class="col-md-7">
+        <table class="table table-sm table-hover" id="casedetailstable">
+            <thead>
+                <tr>
+                    <th>Sak nummer</th>
+                    <th>Brukernavn</th>
+                    <th>Kategori</th>
+                    <th>Dato opprettet</th>
+                    <th>Sak detaljer</th>
+                </tr>
+            </thead>
+            <tbody id="case-details-body">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CaseId</td>
+                        <td>@item.UserName</td>
+                        <td>@item.CategoryName</td>
+                        <td>@item.DateCreated</td>
+                        <td>
+                            <a tabindex="0" class="btn btn-sm btn-info" role="button" data-toggle="popover" data-trigger="focus" data-content="@item.CaseDetails">
+                                Vis detaljer
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-5">
+        @*<label>Antall saker per kategori</label>*@
+        <div id="chartCases"></div>
+    </div>
+</div>

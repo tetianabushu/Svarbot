@@ -1,0 +1,314 @@
+﻿@model Model.CategoryStatDTO
+
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+@*<script type="text/javascript" src="/scripts/moment.min.js"></script>*@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+<script type="text/javascript">
+
+    $(function () {
+        $.ajax({
+            url: '/Admin/GetBrukerNavn',
+            type: 'GET',
+            dataType: 'json',
+            success: function (result) {
+                if (result !== null)
+                    $("#loggedInBruker").text(result);
+                else
+                    window.location = "/Bruker/LoggInn";
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+
+        var date = new Date();
+        var oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        $('#datoFra').datetimepicker({
+            defaultDate: oneWeekAgo, format: 'DD/MM/YYYY'
+        });
+        $('#datoTil').datetimepicker({
+            defaultDate: date, maxDate:date, format: 'DD/MM/YYYY'
+        });
+        // $('#datoTil > .form-control').prop('disabled', true);
+
+        $("#datoFra").on("change.datetimepicker", function (e) {
+            //
+        });
+        $("#datoTil").on("change.datetimepicker", function (e) {
+            //
+        });
+
+        refreshChartPC();
+
+        $('#datoFraServSys').datetimepicker({
+            defaultDate: oneWeekAgo, format: 'DD/MM/YYYY'
+        });
+        $('#datoTilServSys').datetimepicker({
+            defaultDate: date, maxDate: date, format: 'DD/MM/YYYY'
+        });
+
+        $("#datoFraServSys").on("dp.change", function (e) {
+            $('#datoTilServSys').data("DateTimePicker").maxDate(e.date);
+        });
+        $("#datoTilServSys").on("dp.change", function (e) {
+            $('#datoFraServSys').data("DateTimePicker").maxDate(e.date);
+        });
+        refreshChartServSys();
+
+    });
+
+    function loadBrukere() {
+        $('#brukere').load('@Url.Action("UserStatistics", "Admin")');
+    }
+    function loadCaseDetails() {
+        $('#saker').load('@Url.Action("CaseDetails", "Admin")');
+    }
+    //tetiana
+    //oppdaterer graf for PC hoved kategorier
+    function refreshChartPC() {
+        var fromDate = $("#datoFra").find("input").val();
+        var toDate = $("#datoTil").find("input").val();
+        
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(function () { drawChart(fromDate, toDate, 1); });
+    }
+    //tetiana
+    //oppdaterer graf for Service/System hoved kategorier
+    function refreshChartServSys() {
+        var fromDate = $("#datoFraServSys").find("input").val();
+        var toDate = $("#datoTilServSys").find("input").val();
+
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(function () { drawChart(fromDate, toDate, 2); });
+    }
+
+    //Tetiana metode tegner diagram
+    function drawChart(fromDate, toDate, typeId) {
+        $.ajax({
+            url: '/Admin/GetTopHovedCat',
+            type: 'GET',
+            dataType: "json",
+            data: { dateFrom: fromDate, dateTil: toDate, isMain: 1, typeId:typeId },
+            success: function (jsonData) {
+                //let array = JSON.parse(jsonData);
+
+                var data = new google.visualization.DataTable(jsonData);
+                data.addColumn('string', 'CategoryName');
+                data.addColumn('number', 'Count');
+                for (var i = 0; i < jsonData.length; i++) {
+                    categoryName = jsonData[i].CategoryName;
+                    count = jsonData[i].Count;
+                    data.addRow([categoryName, count]);
+                }
+                var optionsCategories = {
+                    titleTextStyle: {
+                        fontSize: 18,
+                    },
+                    pieHole: 0.4,
+                    width: 600,
+                    height: 400,
+                    chartArea: {left:50, top: 70, right: 5, bottom: 20, width:"100%",height:"100%"}
+                };
+
+                if (typeId === 1) {
+                    optionsCategories.title = 'Topp 5 mest brukte kategorier i PC ';
+                    if (data.getNumberOfRows() == 0) {
+                        $("#chartMainCategoriesPC").append("Ingen aktivitet i Svarbot for den valgte perioden. Velg større tidsintervallet i kalender.")
+                    } else {
+                        var chart = new google.visualization.PieChart(document.getElementById('chartMainCategoriesPC'));
+                        chart.draw(data, optionsCategories); 
+                    }
+                } else {
+                    optionsCategories.title = 'Topp 5 mest brukte kategorier i Service ';
+
+                    var chart = new google.visualization.PieChart(document.getElementById('chartMainCategoriesServSys'));
+                    chart.draw(data, optionsCategories);
+                }
+            }
+        });
+    //Tetiana innhenting av stat på underkategorier-instruks
+        $.ajax({
+            url: '/Admin/GetTopHovedCat',
+            type: 'GET',
+            dataType: "json",
+            data: { dateFrom: fromDate, dateTil: toDate, isMain: 0, typeId:typeId },
+            success: function (jsonData) {
+                //let array = JSON.parse(jsonData);
+                var data = new google.visualization.DataTable(jsonData);
+                data.addColumn('string', 'CategoryName');
+                data.addColumn('number', 'Count');
+                for (var i = 0; i < jsonData.length; i++) {
+                    categoryName = jsonData[i].CategoryName;
+                    count = jsonData[i].Count;
+                    data.addRow([categoryName, count]);
+                }
+                var optionsCategories = {
+                    titleTextStyle: {
+                        fontSize: 18,
+                    },
+                    pieHole: 0.4,
+                    width: 500,
+                    height: 350,
+                    chartArea: {left:50, top: 70, right: 5, bottom: 20, width:"100%",height:"100%"},
+                    colors: ['#8bb1ed', '#61dce8', '#d895a2', '#bee8c6', '#d6cd80']
+                };
+
+                if (typeId === 1) {
+                    optionsCategories.title = 'Topp 5 mest brukte instrukser i PC (for alle kategorier)';
+                    var chart = new google.visualization.PieChart(document.getElementById('chartInstruksPC'));
+                    chart.draw(data, optionsCategories);
+                } else {
+                    optionsCategories.title = 'Topp 5 mest brukte instrukser i Service (for alle kategorier) ';
+                    var chart = new google.visualization.PieChart(document.getElementById('chartInstruksServSys'));
+                    chart.draw(data, optionsCategories);
+                }
+            }
+        });
+    }
+    //Tetiana admin logut
+    function logOutAdmin() {
+        $.ajax({
+            url: '/Admin/LogOutAdmin',
+            type: 'GET',
+            dataType: 'json',
+            success: function (result) {
+                if (result === true)
+                    window.location = "/Home/Index";
+
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+
+
+
+</script>
+<body>
+    <div class="row">
+        <div class="col-md-3 offset-8">
+            <i class="fa fa-user"></i>Logget inn som: <label id="loggedInBruker"></label>
+        </div>
+        <div class="col-md-1 icon-click" onclick="logOutAdmin()">
+            <i class="fa fa-sign-out" id="logout">Logout</i>
+        </div>
+    </div>
+    <div>
+        <div class="menu-background">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" onclick="loadCaseDetails() " href="#saker" role="tab" aria-controls="saker" aria-selected="false">Saker</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" onclick="loadBrukere()" href="#brukere" role="tab" aria-controls="brukere" aria-selected="false">Brukere</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="admin" aria-selected="false">Svarbot admin</a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="home-tab">
+                <div class="col-md-12">
+                    <div class="admin-diagram-header col-md-10">Topp 5 mest etterspurte problemer i Svarbot</div>
+                    <div class="row display-flex calenderposition d-fl" id="calender">
+                        <div class='col-md-2 col-xs-4 margin1em'>
+                            <label class="control-label" for="datoFra">Fra dato</label>
+                            <div class="input-group date" id="datoFra" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#datoFra" />
+                                <div class="input-group-append" data-target="#datoFra" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-md-2 col-xs-4'>
+                            <label class="control-label" for="datoTil">Til dato</label>
+                            <div class="input-group date" id="datoTil" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#datoTil" />
+                                <div class="input-group-append" data-target="#datoTil" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-md-2 col-xs-2 refresh-icon-padding float-right'>
+                            <label class="control-label">Oppdater statistikk</label>
+                            <div class="input-group date">
+                                <div class="input-group-append">
+                                    <i title="Oppdater graf" class="fa fa-sync refresh-chart" onclick="refreshChartPC()"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+                <div class="row" style="margin-bottom: 5em;">
+                    <div id="chartMainCategoriesPC" style="width: 600px; height: 400px;">
+                        <i class="fas fa-spinner fa-spin" style="margin-left: 30%; margin-top: 28%; font-size:40px"></i>
+                    </div>                    
+                    <div id="chartInstruksPC" style="width: 500px; height: 350px;">
+                        <i class="fas fa-spinner fa-spin" style="margin-left: 35%; margin-top: 35%; font-size:40px"></i>
+                    </div>                    
+                </div>
+                <div>
+                    <div class="form-group display-flex" id="calender">
+
+                        <div class='col-md-2 col-xs-4 margin1em'>
+                            <label class="control-label" for="datoFraServSys">Fra dato</label>
+                            <div class="input-group date" id="datoFraServSys" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#datoFraServSys" />
+                                <div class="input-group-append" data-target="#datoFraServSys" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-md-2 col-xs-4'>
+                            <label class="control-label" for="datoTilServSys">Til dato</label>
+                            <div class="input-group date" id="datoTilServSys" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#datoTilServSys" />
+                                <div class="input-group-append" data-target="#datoTilServSys" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-md-2 col-xs-2 refresh-icon-padding'>
+                            <label class="control-label"></label>
+                            <div class="input-group date">
+                                <div class="input-group-append">
+                                    <i title="Oppdater graf" class="fa fa-sync refresh-chart" onclick="refreshChartServSys()"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="chartMainCategoriesServSys" style="width: 600px; height: 400px;">
+                        <i class="fas fa-spinner fa-spin" style="margin-left: 30%; margin-top: 28%; font-size:40px"></i>
+                    </div>
+                    <div id="chartInstruksServSys" style="width: 500px; height: 350px;">
+                        <i class="fas fa-spinner fa-spin" style="margin-left: 35%; margin-top: 35%; font-size:40px"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="brukere" role="tabpanel" aria-labelledby="profile-tab">
+
+            </div>
+            <div class="tab-pane fade" id="saker" role="tabpanel" aria-labelledby="contact-tab">                
+            </div>
+            <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="contact-tab">
+                @{Html.RenderAction("CategoryEditor", "Admin");}
+            </div>
+        </div>
+
+    </div>
+</body>

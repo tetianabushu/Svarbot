@@ -1,0 +1,121 @@
+﻿@model List<Model.SubcategoryDTO>
+
+@section JavaScript
+{
+   <script type="text/javascript" src="@Url.Content("/Scripts/SvarbotScripts/favorites.js")"></script>
+}
+
+
+@*Johan Sakshaug*@
+<script>  
+    $(document).ready(function () {
+        $.ajax({
+            url: '/Home/GetFavoriteSubcategories',
+            type: 'GET',
+            dataType: 'json',
+            success: function (subcategories) {
+                $('#favoriteContainer').empty();
+                var output = "";
+                if (subcategories.length == 0) $('#favoriteContainer').append("Du har ingen favoritter");
+
+                for (var s in subcategories) {
+                    var sub = subcategories[s];
+                    console.log(sub);
+                    
+                    output +=
+                    "<div class='starKategori underkategory highlight-row stripped-rows'>" +
+                    "<div class='col-md-1 fa fa-star categoryStarred' id='subcategory" + sub.Id + "' onclick='toggleFavorite(" + sub.Id + ")'></div>" +
+                    "<div a class='col-md-10' onclick='openStarredCategory(" + JSON.stringify(sub) + ")'>" + sub.Name + "</div>" +
+                    "<div class='col-md-1 fa fa-angle-right' onclick='openStarredCategory(" + JSON.stringify(sub)+ ")'></div>" +
+                        "</div>";
+                }
+                $('#favoriteContainer').append(output);
+            },
+            error: function () {
+                alert("Feil ved henting av favoritter");
+            }
+        });
+    });
+
+   
+    //Tetiana: henter hoved kategori navn basert på id
+    function getMainCatNamebyId(mainId) {
+        
+        $.ajax({
+            url: '/Home/GetMainCatName',
+            type: 'GET',
+            data: { mainId: mainId },
+            success: function () {
+                
+            },
+            error: function () {
+                alert("Kunne ikke hente hoved kategori");
+            }
+        });
+    }
+
+    //JS
+    function openStarredCategory(sub) {
+        $("#favoriteContainer").empty();
+        createInstruksVeiledning(sub);
+        $('#goback-icon').attr("onclick", "showFavorites()");
+    }
+
+    
+    function createInstruksVeiledning(sub) {
+        var subCategoryId = sub.Id;
+        var output = "";
+        //var subcategory = $("#subcategory" + subcategoryId);
+        //var isFavorite = subcategory.hasClass("categoryStarred");
+
+        $.ajax({
+            url: '/Home/GetInstruksVeiledning',
+            type: 'GET',
+            dataType: 'json',
+            data: { id: sub.InstruksVeiledningId },
+            success: function (instruksVeiledningById) {
+                //var mainCatName = getMainCatNamebyId(sub.Category_Id);
+                $.ajax({
+                    url: '/Home/GetMainCatName',
+                    type: 'GET',
+                    data: { mainId: sub.Category_Id },
+                    success: function (navn) {
+                        output += "<div class='favorite-instruks-heading undercategorytitle'>" +
+                            "<span id='main-caterogy-title'>" + navn + "</span>" +
+                            "</div>" +
+                            "<div class='instruks'>" +
+                            "<div a class='col-md-12 underkategory question-header-instruks'>" + sub.Name + "</div>";
+                            
+                            output += "<div id='" + instruksVeiledningById.Id + "'>"
+                                + "<div class='col-md-10 col-sm-10'>" + instruksVeiledningById.InstruksDescription + "</div>"+
+                                "</div>";
+                           
+
+                        output += "<div class='createcaseDiv'>"
+                            + "<div a class='col-md-10'>Vil du lagre instruksjonen som favoritt? Trykk på stjernen</div>"
+                            + "<div class='col-md-1 fa fa-star categoryStarred starred-instruks' id='subcategory" + sub.Id + "' onclick='toggleFavorite(" + sub.Id + ")'></div>"
+                            + "</div>";
+
+                        output += "<div class='createcaseDiv'>" +
+                            "<div a class='col-sm-10'>Ser du ikke problemet du har? klikk her for å opprette en sak </div>" +
+                            "<div class='col-sm-1 fa fa-envelope chat-icon-size' id='createcaseiconinsider' onclick='openSkjema(" + sub.Category_Id + ")'></div>" +
+                            "</div>";
+                        output += "</div>"+ "</div>";
+
+                        $('#favoriteContainer').append(output);
+                    },
+                    error: function () {
+                        alert("Kunne ikke hente hoved kategori");
+                    }
+                });                
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+</script>
+
+<div id="favoriteContainer">
+    Laster favoritter...
+</div>

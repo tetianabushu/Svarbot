@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Hjelp";
+}
+
+
+<div class="container" id="hovedContainer">
+    <div class="btn-group-lg">
+        <button type="button" class="btn main-page-button" id="botox"> IKT brukerstøtte</button>
+        <button type="button" class="btn main-page-button" id="botox">  Bistand i Portalen </button>
+        <button type="button" class="btn main-page-button" id="botox"> Henvendelse bygg <br />og eiendom </button>
+        <button type="button" class="btn main-page-button" id="botox"> Mobilservice </button>
+        <button type="button" class="btn main-page-button" id="botox"> Renhold </button>
+        <button type="button" class="btn main-page-button" id="botox"> Resepsjonstjenester HK </button>
+        <button type="button" class="btn main-page-button" id="botox"> SESAM </button>
+        <button type="button" class="btn main-page-button" id="botox"> Skype for Business <br />på møterom </button>
+        <button type="button" class="btn main-page-button" id="botox"> Vaktmestertjenester </button>
+    </div>
+</div>
+
+<script>
+    $('button').each(function () {
+        $(this).on("click", function () {
+            window.location.href = '/Home/Skjema';
+        });
+    });
+</script>

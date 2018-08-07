@@ -1,0 +1,54 @@
+﻿@model List<Model.CaseDetailsDTO>
+@{
+    Layout = null;
+}
+<script>
+    var userDetailsModel = @Html.Raw(Json.Encode(Model));
+    var url = "/Scripts/SvarbotScripts/show-diagram-cat-per-user.js";
+    $.getScript(url);
+</script>
+<div class="modal-header displayinline">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">Bruker: @Model[0].UserName</h4>
+</div>
+<div class="modal-body">
+    <div class="border-bottom">
+        <div class="col-md-5">
+            <div class="position-center" id="chartCategPerUser"></div>
+        </div>
+        <div class="col-md-7">
+            <table class="table table-sm table-hover" id="case-details">
+                <thead>
+                    <tr>
+                        <th>Sak nr</th>
+                        <th>Dato opprettet</th>
+                        <th>Sak detaljer</th>
+
+                    </tr>
+                </thead>
+                <tbody id="case-per-user-details-body">
+                    @foreach (var item in Model)
+                    {
+
+                    <tr>
+                        <td>@item.CaseId</td>
+                        <td>@item.DateCreated</td>
+                        <td>
+                            <a tabindex="0" class="btn btn-sm btn-info" role="button" data-toggle="popover" data-trigger="focus" data-content="@item.CaseDetails">
+                                Vis detaljer
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-info" data-dismiss="modal">Lukk detaljer</button>
+    </div>
+</div>

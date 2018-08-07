@@ -1,0 +1,46 @@
+﻿@model Model.SuperuserDTO
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="admin-login-button">
+    <button class="btn btn-info navbar-btn" onclick="@("window.location.href='" + @Url.Action("AdminLoggInn", "Admin") + "'");">Admin Login</button>
+</div>
+
+<div class="container" id="hovedContainer">
+    <div class="btn-group-lg">
+
+        <button type="button" class="btn main-page-button" id="botox" onclick="window.location.href='/Home/Hjelp'"> <span class="fas fa-cogs" id="underIcon"></span> <br /><br /> Hjelp</button>
+
+        <button type="button" class="btn main-page-button" id="botox" onclick="window.location.href='/Home/Bestille'"> <span class="fa fa-shopping-cart" id="underIcon"></span> <br /><br /> Bestille</button>
+
+        <button type="button" class="btn main-page-button" id="botox" onclick="window.location.href='/Home/Endre'"> <span class="far fa-edit" id="underIcon"></span> <br /><br /> Endre</button>
+
+        <button type="button" class="btn main-page-button" id="botox" onclick="window.location.href='/Home/GodStart'"> <span class="fa fa-plus" id="underIcon"></span> <br /><br /> God start</button>
+
+        <button type="button" class="btn main-page-button" id="botox" onclick="window.location.href='/Home/Kontakt'"> <span class="fas fa-mobile-alt" id="underIcon"></span> <br /><br /> Kontakt</button>
+
+        <button type="button" class="btn main-page-button" id="botox" onclick="window.location.href='/Home/NyttigInformasjon'"> <span class="fa fa-info-circle" id="underIcon"></span> <br /><br /> Nyttig</button>
+
+    </div>
+
+
+
+
+    @*<div class="container" id="myChat" role="dialog">
+        @*<div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Svarbot test versjon 0.1</h4>
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("PartialChat")
+                </div>
+                <div class="modal-footer">
+                    &phi; - laget av prosjektgruppe.10 (Margrete, Johan, og Tetiana fra OsloMet)
+                </div>
+            </div>
+        </div>*@
+
+</div>

@@ -1,0 +1,92 @@
+﻿@*Johan Sakshaug*@
+<script>
+    //Johan Sakshaug
+    function login(event) {
+        if (!event || event.keyCode === 13) {
+            $('#result').empty();
+            username = $('#username').val();
+            password = $('#password').val();
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+            $.ajax({
+                type: "POST",
+                url: "/Home/Login",
+                datatype: "json",
+                data: {
+                    __RequestVerificationToken: token,
+                    inUsername: username, inPassword: password
+                },
+                success: function (result) {
+                    if (result.status == 0) alert("Feil brukernavn eller passord");
+                    else if (result.status == 1) {
+                        $('#loggedInAs').load('@Url.Action("LoggedInAs", "Home")');
+                        loggedIn = true;
+                    }
+                    showLogin();
+                },
+                error: function () {
+                    alert("Feil skjedde ved innlogging, prøv igjen.");
+                }
+            });
+        }
+    }
+
+    function logout() {
+        $.ajax({
+            type: "POST",
+            url: "/Home/Logout",
+            datatype: "json",
+            success: function (result) {
+                loggedIn = false;
+                showLogin();
+                $('#loggedInAs').html("");
+            },
+            error: function () {
+                alert("Feil ved utlogging");
+            }
+        });
+    }
+</script>
+
+
+@if (Session["LoggedIn"] == null || !(bool)Session["LoggedIn"]) {
+    <div class="form-group">
+        <div class="row">
+            <label class="form-text col-sm-4 offset-sm-1 col-xs-9 offset-xs-3">Brukernavn</label>
+            <input class="form-control col-sm-6 col-xs-12 offset-xs-1" type='text' id='username' />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="form-text col-sm-4 offset-sm-1 col-xs-9 offset-xs-3">Passord</label>
+            <input class="form-control col-sm-6 col-xs-12 offset-xs-1" type='password' id='password' onkeyup="login(event)"/>
+        </div>
+    </div>
+    <div class="row">
+        <button type='button' class='btn btn-sm offset-sm-5 offset-xs-1' onclick='login()'>Logg inn</button>
+    </div>
+}
+else if ((bool)Session["LoggedIn"]) {
+    <div class="col-md-12">
+        <div class="row highlight-row" onclick="showFavorites()">
+            <div class="loginMenuIcon col-md-1">
+                <i class="home-button fa fa-star"></i>
+            </div>
+            <div class="loginMenuText col-md-11">Favoritter</div>
+        </div>
+
+        <div class="row highlight-row" onclick="showSubmittedCases()">
+            <div class="loginMenuIcon col-md-1">
+                <i class="home-button fa fa-envelope"></i>
+            </div>
+            <div class="loginMenuText col-md-11">Mine saker</div>
+        </div>
+
+       <div class="row highlight-row" onclick="logout()">
+            <div class="loginMenuIcon col-md-1">
+                <i class="home-button fas fa-sign-out-alt"></i>
+            </div>
+            <div class="loginMenuText col-md-11">Logg ut</div>
+        </div>
+    </div>
+}

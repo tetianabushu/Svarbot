@@ -1,0 +1,618 @@
+﻿/* hoveside style */
+body {
+    background-color: rgb(255, 255, 255);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;    
+    font-size: 100%/*1.25em*/;
+    /*font-size i % fikset noen problemer med tekst i menybar -J*/
+}
+
+button {
+   
+    word-break: break-all;
+}
+
+.main-page-button {
+    min-width: 15em;
+    min-height: 15em;
+    max-width: 15em;
+    max-height: 15em;
+    margin: 1em;
+}
+.webster-header i {
+    margin-right: 1em;
+}
+.webster-header a {
+    color: #343a40;
+    
+}
+
+
+/* ikoner på hovednettside */
+img {
+    margin-left: 1.0em;
+    max-width: 85%;
+    opacity: 0.75;
+}
+
+img:hover {
+    transition: .5s ease-in;
+    opacity: 1.0;
+}
+/*Usikker på hva det er? */
+.base_receive > .avatar:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border: 5px solid #FFF;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+.main-page-button {
+    background-color: rgb(178, 178, 178);
+    text-transform: uppercase;
+}
+
+.main-page-button:hover {
+    background-color: rgb(255, 255, 255);
+    color: rgb(0,0,0);
+    transition: background-color 0.75s ease;
+}
+
+#iconfind {
+    max-width: 7.25em;
+}
+
+#iconfind:hover {
+    transform: scale(1.25, 1.25);
+    transition: transform 0.55s ease;
+}
+img {
+    display: block;
+    width: 100%;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select
+ {
+    max-width: 280px;
+}
+
+/*Svarbot Chat styling */
+.chat-window {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    bottom: 0;
+    position: fixed !important;
+    border: solid 1px;
+    background-color: white;
+    border-color: rgb(178, 178, 178);
+    /*border-bottom-style: none;
+    border-top-color: rgb(178, 178, 178);
+    border-left-color: rgb(178, 178, 178);
+    border-right-color: rgb(178, 178, 178);*/
+}
+#chatfooter {
+    padding: 5px !important;
+}
+.chat-icon-size {
+    font-size: x-large !important;
+    color: #f3f3f3 !important;
+}
+
+.cattype-icon-size {
+    font-size: x-large !important;
+    padding-top: .15em !important;
+    padding-left: 0 !important;    
+}
+
+.main-menu-favorites-icon {
+    font-size: large !important;
+    color: orange !important;
+    padding-top: .35em !important;
+    padding-left: 1.4em !important;
+    cursor: pointer;
+}
+
+.main-menu-favorites-text {
+    cursor: pointer;
+}
+
+.search-icon {
+    font-size: x-large !important;
+    padding-top: 0.35em;
+    padding-left: .3em;
+}
+
+.search-word {
+    /*color: #f48342;*/
+    color: black;
+}
+
+.icon-click {
+    cursor:pointer;
+}
+
+.icon-align-center {
+    text-align: center !important;
+    padding: 0 !important;
+}
+
+.hidden {
+    display: none;
+}
+
+
+.icon_minim {
+    padding: 2px 10px;
+}
+
+.chatbody-container {
+    background: white;
+    margin: 0;
+    height:25em;
+    padding-top: 0 !important;
+    padding-left: 0 !important;
+    padding-right:0 !important;
+    padding-bottom:0 !important;
+    max-height: 400px;
+    overflow-x: hidden;
+}
+
+.top-bar {
+    background: #f48342;
+    margin: 0 !important;
+    display: inherit !important;
+    padding-top: .25em !important;
+    padding-bottom: .25em !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    display: inline-flex;
+    
+}
+ menutoolbar > div {
+    padding:0 !important;
+}
+
+#chatbody p{
+    margin-bottom: 0.2em;
+}
+.instruks {
+    /*display: inline-block !important;*/
+    font-size: 15px;
+    padding-left: 1em;
+    align-items: center;
+    display: inline-block !important;
+    align-items: center !important;
+    width: 100%;
+}
+
+.kategori {
+    font-size: 20px;
+    padding-left: 1em;
+    height: 2em;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    /*margin-top:.75em !important;*/
+}
+
+.no-left-padding {
+    padding-left: 0 !important;
+}
+
+.starKategori {
+    font-size: 20px;    
+    height: 2em;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: .75em !important;
+}
+
+.parentkategori1 {
+    height: auto;
+    align-items: center;
+    width: 100%;
+    margin-top: 3em;
+    font-size: 19px;
+    font-weight: 600;
+    text-align: start;
+    margin-bottom: .8em !important;
+}
+.parentkategori2 {
+    height: auto;
+    align-items: center;
+    width: 100%;
+    margin-top:1em;
+    background-color: #fcfcfc;
+    font-size: 19px;
+    font-weight: 600;
+    text-align: start;
+    margin-bottom: .8em !important;
+}
+
+.parentcategorytitle {
+    display: inline-flex;
+    padding-right: 1em;
+    padding-top: 2em;
+    padding-bottom: 1.75em;
+    padding-left: 1em;
+    width: 100%;
+}
+
+.parentcategorytitle:hover {
+    background-color: #e3eaf4;
+    cursor: pointer;
+} 
+.kategori:hover {    
+    cursor: pointer;
+}
+.highlight-row:hover {
+    background-color: #e3eaf4 !important;
+    cursor: pointer !important;
+}
+.kategori-top10 {
+    font-size: 19px;
+    font-weight: 600;
+    text-align: center;
+    padding-left: 1em;
+    background-color: #fff1e1;
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
+    margin-bottom: .7em;
+}
+
+.favorite-instruks-heading{
+    font-size: 19px;
+    font-weight: 600;
+    text-align: center;
+    padding-left: 1em;
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
+}
+
+.closeicon {
+    /*color: #bcbec5 !important;*/
+    cursor: pointer;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    font-size: medium !important;
+    padding-top: .4em;
+}
+.search-category-header {
+    font-size: 18px;
+    text-align: start;
+    padding-left: 1em;
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
+    background-color: #eaeaea !important;
+    border-radius: 10px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    height: auto;
+}
+/*and child hver andre gang den kommer, og når starter, kommer grå farge først */
+/*.kategori:nth-child(2n+1) {
+    background-color: #fffbf8;
+}
+
+.kategori:nth-child(2n+1):hover {
+    /*transition: ease-in;*/
+    /*transition: all 0.5s ease;*/
+    /*background-color: #e3eaf4;
+    cursor: pointer;
+}*/
+.stripped-rows:nth-child(odd) {
+    background-color: #fdf7f3;
+}
+
+.createcaseDiv {
+    margin-top: 1em !important;
+    margin-bottom:.5em !important;
+    font-size: 15px !important;
+    font-weight: 500;
+    padding-left: 1em;
+    height: auto;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+}
+#createcaseiconinsider {
+    color: darkgray !important;
+    cursor: pointer;
+    padding-left: 0 !important;
+}
+
+.case-details {
+    padding-left: 1em !important;
+    padding-right: 1em !important;
+}
+
+.displayinline {
+    display: block !important;
+}
+.gobackicon {
+    color: #bcbec5 !important;
+    cursor: pointer;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    font-size: large !important;
+}
+
+.home-button {
+    color: #bcbec5 !important;
+    cursor: pointer;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    font-size: large !important;
+}
+.minside-menu-items {
+    color: #bcbec5 !important;
+    cursor: pointer;
+}
+.undercategorytitle {
+    text-align: left !important;
+}
+.footerstyle {
+    width: 100% !important;
+}
+.underkategory {
+     height: auto;
+}
+.question-header-instruks {
+    font-size: 19px;
+    margin-bottom:.3em;
+}
+
+
+.btn-group.dropup {
+    position: fixed;
+    left: 0px;
+    bottom: 0;
+}
+
+/* Skjema styling */
+.form1 {
+    border-style: none;
+    background-color: rgba(255, 255, 255, 0.50);
+    min-width: 25em;
+}
+.hidden {
+    display:none;
+}
+
+.form2 {
+    border-style: none;
+    background-color: rgba(255, 255, 255, 0.50);
+    min-width: 25em;
+    min-height: 20em;
+    max-width: 25em;
+    max-height: 20em;
+}
+
+/*tr:nth-child(2n){
+    background-color: rgba(244, 131, 66, 0.50);
+}*/
+
+.dropDown {
+    display: inline-block;
+    min-width: 25em;
+    border-style: none;
+    background-color: rgba(255, 255, 255, 0.50);
+}
+
+#submit {
+    display: block;
+    min-width: 100%;
+    min-height: 5em;
+    border-style: none;
+    border-radius: 0.25em;
+}
+
+#submit:hover {
+    transition: .5s ease-in;
+    font-weight: bold;
+    background-color: rgba(244, 131, 66, 0.50);
+}
+
+.width-100 {
+    width:100%;
+}
+
+.centerelement{
+    width:50%;
+    margin:0 auto;
+}
+
+#loggedInAs{
+    font-size:0.8em;
+}
+.loggedInAsUsername {
+    font-size: 1.1em !important;
+    font-weight: bold;
+    color: white;
+}
+
+.loginMenuIcon{
+    font-size:1.6em;
+}
+
+.loginMenuText {
+    font-size: 1.3em;
+}
+
+/*Personlig side styling*/
+.categoryStarred {
+    color: orange;
+    cursor: pointer;
+    font-size: large !important;
+}
+.categoryStarred:hover{
+    color:darkorange;
+}
+.categoryUnstarred {
+    color: darkgray;
+    cursor: pointer;
+    font-size: large !important;
+}
+.categoryUnstarred:hover {
+    color: gray;
+}
+
+.verticalalign{
+    padding-top:50%;
+}
+
+.starSubcategoryText:hover {
+    background-color: #e3eaf4;
+    cursor: pointer;
+}
+
+.starSubcategoryName{
+    display:inline;
+}
+
+.starSubcategoryText {
+    padding-left: 1em;
+}
+
+
+
+/*Admin side styling*/
+.container-addon {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #c4c9d1;
+    padding: 1%;
+    /*min-height: 90%;*/
+}
+.menu-background {
+    background-color: #e1e4ea;
+} 
+ul.nav-tabs a:hover {
+    background-color: #302a2a;
+    color: white;
+    display: block;
+}
+ul.nav-tabs a {
+    color: #343a40;
+} 
+
+#menutabs {
+    display: inline;
+    font-size: 20px;
+}
+#addCategoryBtn {
+    width: 20%;
+    margin: 5% auto 5% auto;
+    margin-top:1em;
+}
+.display-flex {
+    display: flex;
+    margin-top:.5em;
+}
+.calenderposition {
+  margin-top:2em;  
+}
+
+.starred-undercategory {
+    margin-top: 0.1em;
+}
+.starred-instruks {
+    font-size: large !important;
+    padding-left: 0px;
+}
+.admin-diagram-header {
+    font-size: 2em;
+    padding-top: .6em;
+    padding-left: 1em;
+    
+}
+.margin1em {
+    margin-left: 1em;
+    
+}
+
+.refresh-chart {
+    font-size: x-large !important;
+}
+.float-right {
+    float:right !important;
+}
+
+.admin-login-button {
+    margin-left: 90%;
+}
+.margin-bottom {
+margin-bottom:1.5em;
+}
+
+.table.dataTable {
+    border-collapse: collapse !important;
+}
+#user-details-modal {
+width:120% !important;
+}
+.overflow-table-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    display: -moz-deck;
+}
+
+.case-table-column {
+    width: 10%;
+}
+.alertWidth{
+    display:inline-block;
+}
+.starSize{
+    font-size:2em;
+}
+
+.modal-width {
+    width:120% !important;
+    
+}
+.position-center {
+    margin-left: 25% !important;
+}
+
+.handling {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.categoryTable tbody tr td a:link {
+    text-decoration: none;
+}
+.categoryTable tbody tr td a:visited {
+    text-decoration: none;
+}
+.categoryTable tbody tr td a:hover {
+    text-decoration: none;
+}
+.categoryTable tbody tr td a:active {
+    text-decoration: none;
+}
+
+#option-for-diagram {
+    max-width: 200px;
+}
+.refresh-icon-padding {
+    padding-top: .8em;
+}
+#addCategoryButton {
+    margin-bottom:1.5em;
+}

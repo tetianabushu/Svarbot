@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Model.UserAndCaseCountDTO>
+
+@{
+    Layout = null;
+}
+<script>
+    $("#userdetailstable").DataTable({
+        "order": [[1, "desc"]]
+    });
+    function openModalDetails(userName) {
+
+        $('#myModal').modal();
+        $('#user-details-modal').load('@Url.Action("UserDetails", "Admin")', { userName });
+    
+    }
+</script>
+
+<div>
+    <div class="col-md-10">
+        <div class="admin-diagram-header margin-bottom col-md-8" width="75%">Brukere av Svarbot med saksoversikt</div>
+        <table class="table table-sm table-hover" id="userdetailstable">
+            <thead>
+                <tr>
+                    <th>Brukernavn</th>
+                    <th>Antall saker opprettet </th>
+                    <th>Detaljer</th>
+                </tr>
+            </thead>
+            <tbody id="brukerbody">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.UserName</td>
+                        <td>@item.CaseCount</td>
+                        <td>
+                            <button type="button" title="Detaljer" class="btn btn-info fas fa-info" data-toggle="modal" onclick="openModalDetails('@item.UserName')"></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg modal-width">
+            <div class="modal-content" id="user-details-modal">
+            </div>
+        </div>
+    </div>
+</div>
+

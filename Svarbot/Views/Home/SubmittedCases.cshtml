@@ -1,0 +1,60 @@
+﻿@*Johan Sakshaug*@
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/Home/GetSubmittedCases',
+            type: 'GET',
+            dataType: 'json',
+            success: function (cases) {
+                $('#casesContainer').empty();
+                var output = "";
+                if (cases.length == 0) $('#casesContainer').append("Du har ikke sendt inn noen saker");
+                for (var c in cases) {
+                    let caseToShow = cases[c];
+                    output +=
+                        "<div class='kategori underkategory highlight-row stripped-rows' id='case" + caseToShow.Id + "'>"
+                        + "<div class='col-md-10'>" + "Saksnr " + caseToShow.Id + "</div>"
+                        + "</div>";
+
+                    $('#casesContainer').html(output);
+                }
+                
+                for (var c in cases) {
+                    let caseToShow = cases[c];
+                    $('#case' + caseToShow.Id).click(function () {
+                        viewCase(caseToShow)
+                    });
+                }
+            },
+            error: function () {
+                alert("Feil ved henting av saker");
+            }
+        });
+    });
+
+    function viewCase(caseToShow) {
+        $('#casesContainer').empty();
+        createCaseView(caseToShow);
+        $('#goback-icon').attr("onclick", "showSubmittedCases()");
+    }
+
+    function createCaseView(caseToShow) {
+        var output = "";
+
+        output +=
+            "<div class='row case-details'>"
+                + "<div class='col-md-12'>" + "Saksnummer: " + caseToShow.Id + "</div>"
+                + "<div class='col-md-12'>" + "Brukernavn: " + caseToShow.Username + "</div>"
+                + "<div class='col-md-12'>" + "SB nummer: " + caseToShow.SBnumber + "</div>"
+                + "<div class='col-md-12'>" + "Sted: " + caseToShow.Location + "</div>"
+                + "<div class='col-md-12'>" + "Beskrivelse: " + caseToShow.Message + "</div>"
+                + "<div class='col-md-12'>" + "Antall personer som er påvirket: " + caseToShow.UserNr + "</div>"
+            + "</div>";
+
+        $('#casesContainer').append(output);
+    }
+</script>
+
+<div id="casesContainer">
+    Laster saker...
+</div>

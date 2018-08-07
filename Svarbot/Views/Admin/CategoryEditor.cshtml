@@ -1,0 +1,131 @@
+﻿@model Model.KategoriDTO
+
+<script>
+    $(document).ready(function () {
+        $('#categoryTable').DataTable();
+
+        //reloads the page after submitting a category
+        $('#addCategoryBtn').click(function () {
+            var categoryType = $("input[name=categoryType]:checked").val();
+            var category = $("#categoryInput").val();
+            $.ajax({
+                url: '@Url.Action("AddCategory", "Admin")',
+                type:"GET",
+                dataType: "html",
+                data: { name: category, categoryTypeId : categoryType },
+                success: function (data) {
+                    $('#admin').html(data);
+                }
+            });
+        });
+    });
+
+    function openAddCatModal() {
+        $('#catModal').on('hidden.bs.modal', function (e) {
+            $.ajax({
+                url: '@Url.Action("CategoryEditor", "Admin")',
+                type:"GET",
+                dataType: "html",
+                success: function (data) {
+                    $('#admin').html(data);
+                }
+            });
+        });
+
+        $('#catModal').modal(
+            {
+                backdrop: 'static',
+                keyboard: false
+            });
+        $.ajax({
+            url: '@Url.Action("SubmitCategory")',
+            type: 'GET',
+            success: function (result) {
+                $('#catModalContent').html(result);
+            }
+        });
+    }
+
+    function openCatModal(catId) {
+        $('#catModal').modal();
+        $.ajax({
+            url: '@Url.Action("SubcategoryEditor")',
+            type: 'GET',
+            data: { id: catId },
+            success: function (result) {
+                $('#catModalContent').html(result);
+            }
+        });
+    }
+
+    function refreshCatModal(html) {
+        $('#catModalContent').html(html);
+    }
+
+    function editCategory(name) {
+        $.ajax({
+            url: '@Url.Action("SubcategoryEditor", "Admin")',
+            type:"GET",
+            dataType: "html",
+            data: { name : name },
+            success: function (data) {
+                $('#admin').html(data);
+            }
+        });
+    }
+
+    function deleteCategory(categoryId) {
+        $.ajax({
+            url: '@Url.Action("DeleteCategory", "Admin")',
+            dataType: "html",
+            data: { categoryId : categoryId },
+            success: function (data) {
+                $('#admin').html(data);
+            }
+        });
+    }
+</script>
+
+<div id="catModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg modal-width">
+        <div class="modal-content" id="catModalContent">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-10">
+    @if (ViewBag.Melding != null) {
+        <div class="alertWidth alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @ViewBag.Melding
+        </div>
+    }
+    @if (ViewBag.Feil != null) {
+        <div class="alertWidth alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @ViewBag.Feil
+        </div>
+    }
+
+    <div class="admin-diagram-header margin-bottom col-md-10">Administrer kategorier og instrukser</div>
+    <button id ="addCategoryButton"type="button" title="Rediger" class="btn btn-info" data-toggle="modal" onclick="openAddCatModal()">Legg til kategori</button>
+    <table class="table table-sm table-hover" id="categoryTable">
+        <thead>
+            <tr>
+                <th scope="col">Kategori</th>
+                <th scope="col">Handlinger</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in ViewBag.Categories) {
+                <tr>
+                    <td>@c.name</td>
+                    <td>
+                        <button type="button" title="Rediger" class="btn btn-info handling fas fa-pen-square" data-toggle="modal" onclick="openCatModal('@c.id')"></button>
+                        <button class="btn btn-danger far fa-trash-alt" onclick="deleteCategory(@c.id)"></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

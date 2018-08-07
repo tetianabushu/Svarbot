@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Webster test support with Svarbot App</title>
+
+    @*Ikke endre rekkefølgen på jqery og bootstrap*@
+    <script type="text/javascript" src="~/scripts/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    @*<script src="https://getbootstrap.com/assets/js/vendor/popper.min.js"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.js"></script>    
+    <script type="text/javascript" src="~/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/scripts/moment.min.js"></script>
+    @*<script type="text/javascript" src="~/scripts/bootstrap-datetimepicker.js"></script>*@
+    <script type="text/javascript" src="~/scripts/DataTables/jquery.dataTables.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    @*<script type="text/javascript" src="~/Scripts/jquery-ui-1.12.1.min.js"></script>*@
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    @*<link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.css" />*@
+    @*<link rel="stylesheet" href="~/Content/DataTables/css/dataTables.bootstrap.min.css" />*@
+    <link rel="stylesheet" href="~/Content/DataTables/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/Content/fontawesome.min.css">
+    <link rel="stylesheet" href="~/Content/fontawesome-all.min.css">
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <p class="webster-header">
+                    <i class="fas fa-cog"></i>@Html.ActionLink("Webster", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+        <br /><br />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Webster test support with Svarbot App</p><hr /><br />
+        </footer>
+    </div>
+    @{Html.RenderAction("PartialChat", "Home");}
+
+</body>
+</html>

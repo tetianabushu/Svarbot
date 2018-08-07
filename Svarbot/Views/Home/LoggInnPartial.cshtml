@@ -1,0 +1,43 @@
+﻿@*Johan Sakshaug*@
+<script>
+    function showLoggedInMenu() {
+        $('#loggedInContainer').empty();
+        $('#loggedInContainer').load('@Url.Action("LoggedInMenu", "Home")');
+        $('#goback-icon').attr("onclick", "openStartView()");
+    }
+    function showFavorites() {
+        $('#loggedInContainer').empty();
+        $('#loggedInContainer').load('@Url.Action("Favorites", "Home")');
+        $('#goback-icon').attr('onclick', 'showLoggedInMenu()');
+    }
+    //brukes ikke lenger tetiana
+    @*function showSearchHistory() {
+        $('#loggedInContainer').empty();
+        $('#loggedInContainer').load('@Url.Action("SearchHistory", "Home")');
+        $('#goback-icon').attr('onclick', 'showLoggedInMenu()');
+    }*@
+    function showSubmittedCases() {
+        $('#loggedInContainer').empty();
+        $('#loggedInContainer').load('@Url.Action("SubmittedCases", "Home")');
+        $('#goback-icon').attr('onclick', 'showLoggedInMenu()');
+    }
+</script>
+
+<div class='kategori-top10 undercategorytitle'>
+    <div class='col-md-1 fa fa-home chat-icon-size home-button' onclick='openStartView()'></div>
+    <div id='goback-icon' class='col-md-1 fa fa-arrow-circle-left chat-icon-size gobackicon' onclick="openStartView()"></div>
+    <span id='main-caterogy-title'>
+        @if (Session["LoggedIn"] == null || !(bool)Session["LoggedIn"])
+        {
+            @:Innlogging
+        }
+        else if ((bool)Session["LoggedIn"])
+        {
+            @:Min side
+        }
+    </span>
+</div>
+
+<div id="loggedInContainer">
+   @{Html.RenderAction("LoggedInMenu", "Home");}
+</div>

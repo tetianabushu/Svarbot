@@ -1,0 +1,7 @@
+/packages
+/.vs
+/*/bin
+/*/obj
+/TestResults
+/Svarbot/Properties/PublishProfiles/Svarbot20180523013744 - Web Deploy.pubxml.user
+/Svarbot/Properties/PublishProfiles/Svarbot20180523013744 - Web Deploy.pubxml

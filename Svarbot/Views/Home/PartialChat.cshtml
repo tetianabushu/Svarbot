@@ -1,0 +1,442 @@
+﻿@model List<Model.CategoryTypeDTO>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/SvarbotScripts/favorites.js")"></script>
+
+<script>
+        var model = @Html.Raw(Json.Encode(Model));
+        var typeId;
+        var mainCategoriId;
+        var mainCategoryName;
+        var subCategoryId;
+        var subCategoryName;
+        var catCount;
+
+        var loggedIn = false;
+
+        var chatIsOpen = false;
+        //Tetiana viser kollapset Svarbot header på Webstersiden
+        $(function () {
+            let param = getParameterByName("sb", window.location.search);
+            if (param !== null && param === "0") {
+                $("#chat-window-1").hide();
+                return;
+            }
+
+            $("#minim_chat_window").addClass('chathidden');
+            $(document).on('click', '#chatheader', chatOnclick)
+            $("#show-all-cat").hide();
+            $("#login-icon").hide();
+            $("#loggedInAs").hide();
+
+            openStartView();
+        });
+    //Tetiana metode for å åpne start view av Svarbot, viser 2 typer av problemer
+        function openStartView() {
+            typeId = null;
+            catCount = 5;
+            $('#chatbody').empty();
+            document.getElementById("searchfieldInput").disabled = true;
+            $("#searchButton").css("pointer-events", "none");
+
+            $("#show-all-cat").hide();
+            $("#searchcategoryheader").hide();
+            $("#searchfieldInput").val("");
+
+            $.ajax({
+                url: '/Home/UserLoggedIn',
+                type: 'GET',
+                success: function (loggedIn) {
+                    if (loggedIn !== 'False') {
+                        $("#mainMenuFavorites").show();
+                    }
+                },
+                error: function (x, y, z) { alert(x + '\n' + y + '\n' + z); }
+            });
+
+            var chatbodyOutput = "<div id='mainMenuFavorites' style='display: none;' class='row' onclick='showUserFavorites()'>" +
+                "<div class='col-xs-3 offset-md-6 col-md-1 fa fa-star main-menu-favorites-icon'></div> " +
+                "<div class='loginMenuText col-xs-8 col-md-4 main-menu-favorites-text'>Favoritter</div > " +
+                "</div>";
+                //når sender int eller string inni i html string, trenger ikke å konvertere,
+                // men når sender hele objekt, må gjøre json.stringify(objektet)!!
+            for (var k in model) {
+                if (model[k].Name === "PC") {
+                    chatbodyOutput += "<div class='parentkategori1' id='" + model[k].Id + "' onclick='openMainCategories(" + model[k].Id +")'>" +
+                        "<div class='parentcategorytitle'><div class='col-xs-1 col-md-1 fas fa-laptop cattype-icon-size'></div><div class='col-xs-10 col-md-10'>Trenger du hjelp med PC?</div>" +
+                        "<div class='col-md-1 fa fa-angle-right'></div></div>" +
+                        "</div>";
+                } else{
+                    chatbodyOutput += "<div class='parentkategori2' id='" + model[k].Id + "' onclick='openMainCategories(" + model[k].Id + ")'>" +
+                        "<div class='parentcategorytitle'><div class='col-xs-1 col-md-1 fas fa-cogs cattype-icon-size'></div><div class='col-xs-10 col-md-10'>Trenger du hjelp med en service?</div>" +
+                        "<div class='col-md-1 fa fa-angle-right'></div></div>" +
+                        "</div>";
+                }
+            }
+
+
+            $('#chatbody').append(chatbodyOutput);
+        }
+    //Tetiana lagrer klikk på kategorier for statistikk
+        function saveClickedOn(categoryId, isMainCat) {
+            $.ajax({
+                url: '/Admin/SaveClickedCategory',
+                type: 'POST',
+                data: {
+                    id: categoryId,
+                    isMainCat: isMainCat
+                },                
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+
+        //Tetiana
+        function getHomeButton() {
+            return "<div class='col-md-1 fa fa-home chat-icon-size home-button' onclick='openStartView()'></div>";
+        }
+
+        //Tetiana metode henter hoved kategorier for en type (PC eller Service/System),
+         //avhengig av søk parameter finnes eller ikke, hentes det top 5 kategorier eller kategorier med søkeresultat
+        function openMainCategories(type_id, showAll) {
+            typeId = type_id;
+            $("#show-all-cat").show();
+            $.ajax({
+                url: '/Home/GetMainCategories',
+                type: 'GET',
+                data: {
+                    typeId: type_id, count: catCount, searchText: $("#searchfieldInput").val()
+                },
+                success: function (list) {
+                    document.getElementById("searchfieldInput").disabled = false;
+                    $("#searchButton").css("pointer-events", "auto");
+                    $('#chatbody').empty();
+
+                    var chatbodyOutput = "";
+                    if ($("#searchfieldInput").val().length != 0) {
+                        $("#categoryheader").hide();
+                    } else {
+                        let homeButtonText = getHomeButton();
+                        chatbodyOutput += "<div class='kategori-top10 undercategorytitle' id='categoryheader'>" +
+                            homeButtonText +
+                            "<div id='goback-icon'class='col-md-1 fa fa-arrow-circle-left chat-icon-size gobackicon' onclick='openStartView()'></div>";
+                        if (showAll === true) {
+                            chatbodyOutput += "<span id='main-caterogy-title'>Alle kategorier</span></div>";
+                        } else {
+                            chatbodyOutput += "<span id='main-caterogy-title'>Topp 5 mest brukte kategorier</span></div>";
+                        }
+                        
+                    
+                    }
+                    for (var k in list) {
+                        let count = parseInt(k) + 1;
+                        //når sender int eller string inni i html string, trenger ikke å konvertere,
+                        // men når sender hele objekt, må gjøre json.stringify(objektet)!!
+                        chatbodyOutput += "<div class='kategori highlight-row stripped-rows' id='" + list[k].id + "' onclick='openUndercategory(" + list[k].id + ");saveClickedOn(" + list[k].id + "," + 1 + ");'>" +
+                            "<div a class='col-md-10'>" + count + '.  ' + list[k].name + "</div>" +
+                            "<div class='col-md-1 fa fa-angle-right'></div>" +
+                            "</div>";
+                    }
+                    $('#chatbody').append(chatbodyOutput);
+
+                    if (list.length === 0) {
+                        $('#searchcategoryResult').html("Søk ga ingen resultat(er)");
+                    }
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        };
+
+      //Tetiana metode henter og viser liste av underkategorier for en hoved kategori
+    //Vise bruker sine favoritter med gul stjerne - Johan
+    function openUndercategory(mainId) {
+            $('#chatbody').empty();
+
+            document.getElementById("searchfieldInput").disabled = false;
+            mainCategoriId = mainId;
+            $.ajax({
+                url: '/Home/GetUndercategories',
+                type: 'GET',
+                data: {
+                    categoryId: mainId, searchText: $("#searchfieldInput").val()
+                },
+                success: function (mainCategory) {
+                    mainCategoryName = mainCategory.Name;
+                    var output = "";
+                    output += "<div class='kategori-top10 undercategorytitle'id='categoryheader'>" +
+                        getHomeButton() +
+                        "<div id='goback-icon'class='col-md-1 fa fa-arrow-circle-left chat-icon-size gobackicon'" +
+                        "onclick='openMainCategories(" + typeId + " )'></div>";
+                    output += "<span id='main-caterogy-title'>" + mainCategory.Name + "</span></div>";
+
+                    for (var u in mainCategory.SubCategories) {
+                        let subId = mainCategory.SubCategories[u].Id;
+                        let subName = mainCategory.SubCategories[u].Name;
+                        output +=
+                            "<div class='display-flex highlight-row stripped-rows'>";
+
+                        let kategoriSizeClass = "col-md-12";
+
+                        if (mainCategory.IsLoggedIn) {
+                            if (mainCategory.SubCategories[u].IsFavorite) {
+                                output += "<div class='col-md-1 categoryStarred starred-undercategory' id='subcategory" + subId + "' onclick='toggleFavorite(" + subId + ")' ><i class='fa fa-star'></i ></div >";
+                            }
+                            else {
+                                output += "<div class='col-md-1 categoryUnstarred starred-undercategory' id='subcategory" + subId + "' onclick='toggleFavorite(" + subId + ")' ><i class='fa fa-star'></i ></div >";
+                            }
+                            kategoriSizeClass = "col-md-11";
+                        }
+                        output +=
+                            "<div class='" + kategoriSizeClass + " kategori underkategory no-left-padding' id='" + subId + "' " +
+                            " onclick='openInstruksVeiledning(" + subId + " );saveClickedOn(" + subId + "," + 0 + ");'>" +
+                            "<div a class='col-md-11'>" + subName + "</div>" +
+                            "<div class='col-md-1 fa fa-angle-right'></div>" +
+                            "</div>" +
+                            "</div>";
+                        }
+                        //lage en til felt med opprett sak icon
+                        output += "<div class='createcaseDiv'>" +
+                            "<div a class='col-md-11'>Ser du ikke problemet du har? klikk her for å opprette en sak </div>" +
+                            "<div class='col-md-1 fa fa-envelope chat-icon-size' id='createcaseiconinsider' onclick='openSkjema(" + mainCategory.Id + ");'></div>" +
+                            "</div>";
+                        $('#chatbody').append(output);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+    };
+        //Tetiana metode henter instruks for en underkategori og bygger dynamisk visning av instruks
+        function openInstruksVeiledning(underId)
+        {
+            subCategoryId = underId;
+
+            $.ajax({
+                url: '/Home/OpenInstruksVeiledning',
+                type: 'GET',
+                data: {
+                    underCategoryId: underId,
+                },
+                success: function (subCatDetails) {
+                    document.getElementById("searchfieldInput").disabled = false;
+                    $('#chatbody').empty();
+
+                    output = "";
+                    output += "<div class='kategori-top10 undercategorytitle' id='categoryheader'>" +
+                        getHomeButton() +
+                        "<div id='goback-icon'class='col-md-1 fa fa-arrow-circle-left chat-icon-size gobackicon'" +
+                        "onclick='openUndercategory(" + subCatDetails.MainCatId + ")'></div>";
+                    output += "<span id='main-caterogy-title'>" + subCatDetails.MainCatName + "</span></div>" +
+                        "<div class='instruks' id='" + subCatDetails.Id + "'>" +
+                        "<div a class='col-md-12 underkategory question-header-instruks'>" + subCatDetails.Name + "</div>";
+
+                    output += "<div class='instruks' id='" + subCatDetails.InstruksVeiledningId + "'>" +
+                        "<div class='col-md-10'>" + subCatDetails.Instructions + "</div>" +
+                        "</div>";
+
+                    if (subCatDetails.IsLoggedIn === true) {
+                        output += "<div class='createcaseDiv'>" +
+                            "<div a class='col-md-10'>Vil du lagre instruksjonen som favoritt? Trykk på stjernen</div>";
+                        if (subCatDetails.IsFavorite === true) {
+                            output += "<div class='col-md-1 fa fa-star categoryStarred starred-instruks' id='subcategory" + underId + "' onclick='toggleFavorite(" + underId + ")'></div>";
+                        }
+                        else {
+                            output += "<div class='col-md-1 fa fa-star categoryUnstarred starred-instruks' id='subcategory" + underId + "' onclick='toggleFavorite(" + underId + ")'></div>";
+                        }
+                        output += "</div>";
+                    }
+
+                    output += "<div class='createcaseDiv'>" +
+                        "<div a class='col-md-10'>Ser du ikke problemet du har? klikk her for å opprette en sak </div>" +
+                        "<div class='col-md-1 fa fa-envelope chat-icon-size' id='createcaseiconinsider' onclick='openSkjema(" + subCatDetails.MainCatId + ")'></div>" +
+                        "</div>";
+                    $('#chatbody').append(output);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+    }
+
+
+    //Tetiana
+    function searchTextUpdated(event) {
+        if (!event || event.keyCode === 13 || $("#searchfieldInput").val() === "") {
+
+                if ($("#searchfieldInput").val() === "")
+                    catCount = 5;
+                else catCount = null;
+                // Trigger the button element with a click
+
+                if ($("#searchfieldInput").val().length != 0) {
+                    $("#categoryheader").hide();
+
+                    let searchword = $("#searchfieldInput").val();
+
+                    let searchresult = "Kategorier funnet med '<b><span class='search-word'>" + searchword + "</span></b>' er:";
+
+                    $('#searchcategoryResult').html(searchresult);
+                    $("#searchcategoryheader").show();
+                } if ($("#searchfieldInput").val() === "") {
+                    $("#searchcategoryheader").hide();
+                }
+
+                openMainCategories(typeId);
+            }
+        }
+
+        //Tetiana
+        //opprette en sak kun med en kjent kategori
+        function openSkjema(mainCategoriId)
+        {
+            if (mainCategoriId != null) {
+                window.open('/Home/Skjema?categoryId=' + mainCategoriId + '&sb=0', target = '_blank');
+            }
+        return false;
+
+    };
+    //Tetiana åpner sak skjema
+        function openSkjemaMedId() {
+            openSkjema(mainCategoriId);
+        };
+        //Tetiana
+        //metode for å sjekke om sb parameter finnes i query string
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+    //Tetiana
+    //kjøre sjekk på om sb(svarbot vindu) finnes og er lik 0. Da ikke vise svarbot vindu på skjermen.
+    //trenger for skjema og lange_instruks tabs i browser, hvor vi trenger ikke å vise svarbot
+
+        function chatOnclick() {
+            var $this = $("#minim_chat_window");
+            if (!$this.hasClass('chathidden')) {
+                $('#chatbody').slideUp();
+                $('#chatfooter').hide();
+                $this.addClass('chathidden');
+                //<i class="fas fa-angle-up"></i>
+                $this.removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
+                $("#show-all-cat").hide();
+                $("#login-icon").hide();
+                $("#loggedInAs").hide();
+                $(document).off('click', '#minim_chat_window');
+                $("#chatheader").addClass('icon-click');
+                $(document).on('click', '#chatheader', chatOnclick)
+
+            }else{
+                $('#chatbody').slideDown();
+                $('#chatfooter').show();
+                $this.removeClass('chathidden');
+                $this.removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
+                if (typeId) {
+                    $("#show-all-cat").show();
+                }
+                $("#login-icon").show();
+                $("#loggedInAs").show();
+                $("#chatheader").removeClass('icon-click');
+                $(document).off('click', '#chatheader');
+                $(document).on('click', '#minim_chat_window', chatOnclick);
+            }
+        }
+
+        //Johan Sakshaug
+        function showLogin() {
+            $("#searchfieldInput").val("");
+            $("#searchcategoryheader").hide();
+
+            document.getElementById("searchfieldInput").disabled = true;
+            $("#searchButton").css("pointer-events", "none");
+
+            $('#chatbody').empty();
+            $("#show-all-cat").hide();
+            $('#chatbody').load('@Url.Action("LoggInnPartial", "Home")');
+        }
+
+    //tetiana
+    //metode som resetter søk
+        function resetSearch() {
+            catCount = 5;
+            $("#searchcategoryheader").hide();
+            $("#searchfieldInput").val("");
+            openMainCategories(typeId);
+        }
+    //Tetiana
+    //metode for å vise alle kategorier
+        function showAll() {
+            $("#searchfieldInput").val("");
+            $("#searchcategoryheader").hide();
+            catCount = null;
+            openMainCategories(typeId, true);
+        }
+
+        function showUserFavorites() {
+            $("#searchfieldInput").val("");
+            $("#searchcategoryheader").hide();
+
+            document.getElementById("searchfieldInput").disabled = true;
+            $("#searchButton").css("pointer-events", "none");
+
+            $('#chatbody').empty();
+            $("#show-all-cat").hide();
+            $('#chatbody').load('@Url.Action("LoggInnPartial", "Home")', function () {
+                $('#loggedInContainer').empty();
+                $('#loggedInContainer').load('@Url.Action("Favorites", "Home")');
+                $('#goback-icon').attr('onclick', 'showLoggedInMenu()');
+            });
+        }
+
+</script>
+@*Tetiana*@
+<div class="chat-window offset-xl-9 col-xl-3 offset-lg-8 col-lg-4 offset-md-7 col-md-5" id="chat-window-1">
+    <div class="card width-100">
+        <div id="chatheader" class="top-bar icon-click">
+            <div id="chat-icon" class="col-md-1">
+                <i class="fa fa-comments chat-icon-size"></i>
+            </div>
+            <div id="top5-header" class="col-md-5">
+                <span id="svarbottitle">Svarbot</span>
+            </div>
+            <div class="col-md-3 icon-align-center">
+                <div id="loggedInAs" class="loggedInAsUsername">
+                    @{Html.RenderAction("LoggedInAs", "Home");}
+                </div>
+            </div>
+            
+            <div class="col-md-1 icon-align-center">
+                <i onclick="showAll()" class="fas fa-list chat-icon-size icon-click" title="Vis alle kategorier" id="show-all-cat"></i>
+            </div>
+            <div class="col-md-1 icon-align-center">
+                <i class="fa fa-user chat-icon-size icon-click" title="Logg på" id="login-icon" onclick="showLogin()"></i>
+            </div>
+            <div class="col-md-1 icon-align-center">
+                <i class="fa fa-angle-up chat-icon-size icon-click" id="minim_chat_window"></i>
+            </div>
+        </div>
+
+    </div>
+    <div class="row col-md-12 search-category-header" id="searchcategoryheader">
+        <div class="col-md-11" id="searchcategoryResult"></div>
+        <div class="col-md-1 far fa-times-circle closeicon" onclick="resetSearch()"></div>
+    </div>
+    <div id="chatbody" class="card-body chatbody-container hidden">
+    </div>
+    <div class="card-footer footerstyle hidden" id="chatfooter">
+        <div class="input-group">
+            <input type="text" onkeyup="searchTextUpdated(event)" class="form-control col-md-11" id="searchfieldInput" placeholder="Søk for...">
+            <i class="fa fa-search search-icon icon-click" id="searchButton" onclick="searchTextUpdated()"></i>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
