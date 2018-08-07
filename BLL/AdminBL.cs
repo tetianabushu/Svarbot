@@ -12,11 +12,12 @@ namespace BLL
     public class AdminBL
     {
         AdminDAL adminDAL;
-
+		
         public AdminBL()
         {
             adminDAL = new AdminDAL(new SvarbotDbSys());
         }
+		
         public SuperuserDTO SuperuserInDb(SuperuserDTO InSuperDTO)
         {
             return adminDAL.Superbruker_i_DB(InSuperDTO);
