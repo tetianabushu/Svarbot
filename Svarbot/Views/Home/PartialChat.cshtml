@@ -98,7 +98,7 @@
 
         //Tetiana metode henter hoved kategorier for en type (PC eller Service/System),
          //avhengig av søk parameter finnes eller ikke, hentes det top 5 kategorier eller kategorier med søkeresultat
-        function openMainCategories(type_id, showAll) {
+        function openMainCategories(type_id) {
             typeId = type_id;
             $("#show-all-cat").show();
             $.ajax({
@@ -120,7 +120,7 @@
                         chatbodyOutput += "<div class='kategori-top10 undercategorytitle' id='categoryheader'>" +
                             homeButtonText +
                             "<div id='goback-icon'class='col-md-1 fa fa-arrow-circle-left chat-icon-size gobackicon' onclick='openStartView()'></div>";
-                        if (showAll === true) {
+                        if (catCount == null) {
                             chatbodyOutput += "<span id='main-caterogy-title'>Alle kategorier</span></div>";
                         } else {
                             chatbodyOutput += "<span id='main-caterogy-title'>Topp 5 mest brukte kategorier</span></div>";
@@ -374,7 +374,7 @@
             $("#searchfieldInput").val("");
             $("#searchcategoryheader").hide();
             catCount = null;
-            openMainCategories(typeId, true);
+            openMainCategories(typeId);
         }
 
         function showUserFavorites() {
